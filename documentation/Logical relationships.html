@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logical Relationships</title>
+</head>
+<body>
+<img src="Class%20Diagram.svg" alt="Class Diagram">
+<p>
+    ' ===== Logical relationships (ID-based; no object graphs) =====
+
+    ' Portfolio 1 -- 0..* Transaction (via portfolioId)
+    Portfolio "1" o-- "0..*" Transaction : portfolioId
+
+    ' Portfolio 1 -- 0..* OwnedStock (via portfolioId)
+    Portfolio "1" o-- "0..*" OwnedStock : portfolioId
+
+    ' Stock 1 -- 0..* Transaction (via stockSymbol)
+    Stock "1" o-- "0..*" Transaction : stockSymbol
+
+    ' Stock 1 -- 0..* StockPriceHistory (via stockSymbol)
+    Stock "1" o-- "0..*" StockPriceHistory : stockSymbol
+</p>
+</body>
+</html>
