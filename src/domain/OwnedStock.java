@@ -7,7 +7,6 @@ public class OwnedStock
 
   private final UUID id;
   private int numberOfShares;
-
   private final UUID portfolioId;
   private final String stockSymbol;
 
