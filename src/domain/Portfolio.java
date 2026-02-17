@@ -7,9 +7,9 @@ public class Portfolio
   private final UUID id;
   private double currentBalance;
 
-  public Portfolio(UUID id, double currentBalance)
+  public Portfolio(double currentBalance)
   {
-    this.id = id;
+    this.id = UUID.randomUUID();
     this.currentBalance = currentBalance;
   }
 

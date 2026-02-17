@@ -2,12 +2,6 @@ package domain;
 
 public class Stock
 {
-  private static final String STEADY = "Steady";
-  private static final String GROWING = "Growing";
-  private static final String DECLINING = "Declining";
-  private static final String BANKRUPT = "Bankrupt";
-  private static final String RESET = "Reset";
-
   private final String symbol;
   private final String name;
   private double currentPrice;

@@ -9,10 +9,10 @@ public class Transaction
   private final UUID portfolioId;
   private final String stockSymbol;
   public TransactionType type;
-  private int quantity;
-  private double pricePerShare;
-  private double totalAmount;
-  private double fee;
+  private final int quantity;
+  private final double pricePerShare;
+  private final double totalAmount;
+  private final double fee;
   private final Instant timestamp;
 
   public Transaction(UUID id, UUID portfolioId, String stockSymbol,
@@ -28,26 +28,6 @@ public class Transaction
     this.pricePerShare = pricePerShare;
     this.quantity = quantity;
     this.type = type;
-  }
-
-  public void setQuantity(int quantity)
-  {
-    this.quantity = quantity;
-  }
-
-  public void setPricePerShare(double pricePerShare)
-  {
-    this.pricePerShare = pricePerShare;
-  }
-
-  public void setTotalAmount(double totalAmount)
-  {
-    this.totalAmount = totalAmount;
-  }
-
-  public void setFee(double fee)
-  {
-    this.fee = fee;
   }
 
   public UUID getId()
