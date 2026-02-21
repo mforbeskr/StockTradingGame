@@ -13,10 +13,10 @@ public class RunApp
     AppConfig appConfig = AppConfig.getInstance();
 
     // Log data from appConfig
-    logger.log("INFO", "Starting Balance: " + appConfig.getStartingBalance());
+    logger.log("INFO", "Starting Balance: ¤" + appConfig.getStartingBalance());
     logger.log("INFO", "Transaction Fee: " + appConfig.getTransactionFee());
-    logger.log("INFO", "Stock Reset Value: " + appConfig.getStockResetValue());
     logger.log("INFO", "Update Frequency in ms: " + appConfig.getUpdateFrequencyInMs());
+    logger.log("INFO", "Stock Reset Value: " + appConfig.getStockResetValue());
 
     // Warning message testing
     logger.log("WARNING", "Stock not found in database");
