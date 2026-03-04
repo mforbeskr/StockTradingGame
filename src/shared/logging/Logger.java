@@ -2,19 +2,15 @@ package shared.logging;
 
 public class Logger
 {
-  private static Logger instance;
+  private static final Logger instance = new Logger();
   private LogOutput output;
 
   private Logger()
   {
   }
 
-  public static synchronized Logger getInstance()
+  public static Logger getInstance()
   {
-    if (instance == null)
-    {
-      instance = new Logger();
-    }
     return instance;
   }
 
@@ -25,12 +21,6 @@ public class Logger
 
   public void log(String level, String message)
   {
-    if (output != null)
-    {
-      synchronized (output)
-      {
-        output.log(level, message);
-      }
-    }
+    output.log(level, message);
   }
 }

@@ -5,10 +5,10 @@ public class Stock
   private final String symbol;
   private final String name;
   private double currentPrice;
-  private String currentState;
+  private State currentState;
 
   public Stock(String symbol, String name, double currentPrice,
-      String currentState)
+      State currentState)
   {
     this.symbol = symbol;
     this.name = name;
@@ -21,7 +21,7 @@ public class Stock
     this.currentPrice = currentPrice;
   }
 
-  public void setCurrentState(String currentState)
+  public void setCurrentState(State currentState)
   {
     this.currentState = currentState;
   }
@@ -41,7 +41,7 @@ public class Stock
     return currentPrice;
   }
 
-  public String getCurrentState()
+  public State getCurrentState()
   {
     return currentState;
   }

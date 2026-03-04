@@ -2,7 +2,7 @@ package shared.configuration;
 
 public class AppConfig
 {
-  private static AppConfig instance = new AppConfig();
+  private static final AppConfig instance = new AppConfig();
   private final int startingBalance;
   private final double transactionFee;
   private final int updateFrequencyInMs;
@@ -18,10 +18,6 @@ public class AppConfig
 
   public static AppConfig getInstance()
   {
-    if (instance == null)
-    {
-      instance = new AppConfig();
-    }
     return instance;
   }
 

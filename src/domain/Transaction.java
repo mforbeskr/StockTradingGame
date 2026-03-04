@@ -8,18 +8,18 @@ public class Transaction
   private final UUID id;
   private final UUID portfolioId;
   private final String stockSymbol;
-  public TransactionType type;
+  private final TransactionType type;
   private final int quantity;
   private final double pricePerShare;
   private final double totalAmount;
   private final double fee;
   private final Instant timestamp;
 
-  public Transaction(UUID id, UUID portfolioId, String stockSymbol,
+  public Transaction(UUID portfolioId, String stockSymbol,
       Instant timestamp, double fee, double pricePerShare, int quantity,
       TransactionType type)
   {
-    this.id = id;
+    this.id = UUID.randomUUID();
     this.portfolioId = portfolioId;
     this.stockSymbol = stockSymbol;
     this.timestamp = timestamp;
@@ -28,6 +28,22 @@ public class Transaction
     this.pricePerShare = pricePerShare;
     this.quantity = quantity;
     this.type = type;
+  }
+
+  // for EXISTING Transaction -> fromPSV usage (because ID not initialized before)
+  public Transaction(UUID id, UUID portfolioId, String stockSymbol,
+      TransactionType type, int quantity, double pricePerShare,
+      double totalAmount, double fee, Instant timestamp)
+  {
+    this.id = id;
+    this.portfolioId = portfolioId;
+    this.stockSymbol = stockSymbol;
+    this.type = type;
+    this.quantity = quantity;
+    this.pricePerShare = pricePerShare;
+    this.totalAmount = totalAmount;
+    this.fee = fee;
+    this.timestamp = timestamp;
   }
 
   public UUID getId()

@@ -13,6 +13,13 @@ public class Portfolio
     this.currentBalance = currentBalance;
   }
 
+  // for EXISTING portfolio -> fromPSV usage (because ID not initialized before)
+  public Portfolio(UUID id, double currentBalance)
+  {
+    this.id = id;
+    this.currentBalance = currentBalance;
+  }
+
   public UUID getId()
   {
     return id;

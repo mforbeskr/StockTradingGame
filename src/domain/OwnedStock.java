@@ -10,13 +10,22 @@ public class OwnedStock
   private final UUID portfolioId;
   private final String stockSymbol;
 
-  public OwnedStock(UUID id, int numberOfShares, UUID portfolio,
-      String stock)
+  public OwnedStock(int numberOfShares, UUID portfolioId,
+      String stockSymbol)
+  {
+    this.id = UUID.randomUUID();
+    this.numberOfShares = numberOfShares;
+    this.portfolioId = portfolioId;
+    this.stockSymbol = stockSymbol;
+  }
+
+  public OwnedStock(UUID id, int numberOfShares, UUID portfolioId,
+      String stockSymbol)
   {
     this.id = id;
     this.numberOfShares = numberOfShares;
-    this.portfolioId = portfolio;
-    this.stockSymbol = stock;
+    this.portfolioId = portfolioId;
+    this.stockSymbol = stockSymbol;
   }
 
   public UUID getId()
@@ -34,7 +43,7 @@ public class OwnedStock
     this.numberOfShares = numberOfShares;
   }
 
-  public UUID getPortfolio()
+  public UUID getPortfolioId()
   {
     return portfolioId;
   }
