@@ -22,7 +22,7 @@ public class FileStockDAO implements StockDAO
     if (getById(stock.getSymbol()).isPresent())
     {
       throw new RuntimeException(
-          "Stock with symbol" + stock.getSymbol() + " already exists!");
+          "Stock with symbol " + stock.getSymbol() + " already exists!");
     }
     uow.getStocks().add(stock);
     return stock;

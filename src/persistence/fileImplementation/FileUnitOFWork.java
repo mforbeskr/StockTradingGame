@@ -135,8 +135,9 @@ public class FileUnitOFWork implements UnitOfWork
 
     UUID id = UUID.fromString(parts[0]);
     double currentBalance = Double.parseDouble(parts[1]);
+    String name = parts[2];
 
-    return new Portfolio(id, currentBalance);
+    return new Portfolio(id, name, currentBalance);
   }
 
   // OwnedStockPSV

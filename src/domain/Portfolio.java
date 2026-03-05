@@ -5,6 +5,7 @@ import java.util.UUID;
 public class Portfolio
 {
   private final UUID id;
+  private String name;
   private double currentBalance;
 
   public Portfolio(double currentBalance)
@@ -14,9 +15,10 @@ public class Portfolio
   }
 
   // for EXISTING portfolio -> fromPSV usage (because ID not initialized before)
-  public Portfolio(UUID id, double currentBalance)
+  public Portfolio(UUID id, String name, double currentBalance)
   {
     this.id = id;
+    this.name = name;
     this.currentBalance = currentBalance;
   }
 
