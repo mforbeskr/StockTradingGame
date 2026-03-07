@@ -21,7 +21,20 @@ public class FileOwnedStockDAO implements OwnedStockDAO
 
   @Override public OwnedStock create(OwnedStock ownedStock)
   {
-    uow.getOwnedStocks().add(ownedStock);
+    List<OwnedStock> list = uow.getOwnedStocks();
+
+    for (OwnedStock alreadyOwned : list)
+    {
+      if (alreadyOwned.getPortfolioId().equals(ownedStock.getPortfolioId())
+          && alreadyOwned.getStockSymbol()
+          .equalsIgnoreCase(ownedStock.getStockSymbol()))
+      {
+        Logger.getInstance().log("WARNING", "Portfolio: " + ownedStock.getPortfolioId() + " already owns '" + ownedStock.getStockSymbol() + "'. Use update method instead.");
+        throw new RuntimeException(
+            "OwnedStock already exists for  this portfolio!");
+      }
+    }
+    list.add(ownedStock);
     return ownedStock;
   }
 

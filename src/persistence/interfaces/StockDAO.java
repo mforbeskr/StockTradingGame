@@ -11,5 +11,5 @@ public interface StockDAO
   void update(Stock stock);
   boolean delete(String symbol);
   List<Stock> getAll();
-  Optional<Stock> getById(String symbol); // symbols identify stocks
+  Optional<Stock> getBySymbol(String symbol); // symbols identify stocks
 }

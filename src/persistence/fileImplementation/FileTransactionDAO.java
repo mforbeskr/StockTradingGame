@@ -33,4 +33,10 @@ public class FileTransactionDAO implements TransactionDAO
   {
     return List.copyOf(uow.getTransactions());
   }
+
+  @Override public void append(Transaction transaction)
+  {
+    uow.getTransactionBuffer().add(transaction);
+  }
+
 }

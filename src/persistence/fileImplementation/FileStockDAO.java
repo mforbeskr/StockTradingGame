@@ -19,7 +19,7 @@ public class FileStockDAO implements StockDAO
 
   @Override public Stock create(Stock stock)
   { // prevent duplicates, since Stocks identify by 'string symbols'
-    if (getById(stock.getSymbol()).isPresent())
+    if (getBySymbol(stock.getSymbol()).isPresent())
     {
       throw new RuntimeException(
           "Stock with symbol " + stock.getSymbol() + " already exists!");
@@ -66,7 +66,7 @@ public class FileStockDAO implements StockDAO
     return List.copyOf(uow.getStocks());
   }
 
-  @Override public Optional<Stock> getById(String symbol)
+  @Override public Optional<Stock> getBySymbol(String symbol)
   {
     for (Stock stock : uow.getStocks())
     {

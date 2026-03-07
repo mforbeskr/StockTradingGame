@@ -19,7 +19,7 @@ public class Logger
     this.output = output;
   }
 
-  public void log(String level, String message)
+  public synchronized void log(String level, String message)
   {
     output.log(level, message);
   }

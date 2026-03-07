@@ -22,20 +22,25 @@ public class FileStockPriceHistoryDAO implements StockPriceHistoryDAO {
 
   @Override
   public List<StockPriceHistory> getAll() {
-    return List.copyOf(uow.getStockPriceHistories());
+    return List.copyOf(uow.getStockPriceHistory());
   }
 
   @Override
   public Optional<StockPriceHistory> getById(UUID id) {
-    return uow.getStockPriceHistories().stream()
+    return uow.getStockPriceHistory().stream()
         .filter(h -> h.getId().equals(id))
         .findFirst();
   }
 
-  // Helper method specific to history
+  // custom getter by symbol....
   public List<StockPriceHistory> getBySymbol(String symbol) {
-    return uow.getStockPriceHistories().stream()
+    return uow.getStockPriceHistory().stream()
         .filter(h -> h.getStockSymbol().equals(symbol))
         .collect(Collectors.toList());
+  }
+
+  @Override public void append(StockPriceHistory stockPriceHistory)
+  {
+    uow.getStockPriceHistoryBuffer().add(stockPriceHistory);
   }
 }

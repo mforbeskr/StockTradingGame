@@ -5,12 +5,13 @@ import java.util.UUID;
 public class Portfolio
 {
   private final UUID id;
-  private String name;
+  private final String name;
   private double currentBalance;
 
-  public Portfolio(double currentBalance)
+  public Portfolio(String name, double currentBalance)
   {
     this.id = UUID.randomUUID();
+    this.name = name;
     this.currentBalance = currentBalance;
   }
 
@@ -30,6 +31,11 @@ public class Portfolio
   public double getCurrentBalance()
   {
     return currentBalance;
+  }
+
+  public String getName()
+  {
+    return name;
   }
 
   public void setCurrentBalance(double currentBalance)

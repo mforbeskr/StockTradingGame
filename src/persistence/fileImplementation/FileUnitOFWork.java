@@ -2,11 +2,14 @@ package persistence.fileImplementation;
 
 import domain.*;
 import persistence.interfaces.UnitOfWork;
+import shared.logging.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +19,7 @@ import java.util.function.Function;
 public class FileUnitOFWork implements UnitOfWork
 {
   private final String directoryPath;
-  private static final Object FILE_WRITE_LOCK = new Object();
+  private static final Object file_write_lock = new Object();
   private List<Portfolio> portfolios;
   private List<Stock> stocks;
   private List<OwnedStock> ownedStocks;
@@ -24,12 +27,11 @@ public class FileUnitOFWork implements UnitOfWork
   private List<StockPriceHistory> stockPriceHistories;
   private final List<Transaction> transactionBuffer = new ArrayList<>();
   private final List<StockPriceHistory> stockPriceHistoryBuffer = new ArrayList<>();
-  private static final String PORTFOLIOS_FILE = "portfolios.psv";
-  private static final String STOCKS_FILE = "stocks.psv";
-  private static final String OWNED_STOCKS_FILE = "ownedStocks.psv";
-  private static final String TRANSACTIONS_FILE = "transactions.psv";
-  private static final String STOCK_PRICE_HISTORY_FILE = "stockPriceHistory.psv";
-
+  private static final String portfolios_file = "portfolios.psv";
+  private static final String stocks_file = "stocks.psv";
+  private static final String owned_stocks_file = "ownedStocks.psv";
+  private static final String transactions_file = "transactions.psv";
+  private static final String stock_price_history_file = "stockPriceHistory.psv";
 
   public FileUnitOFWork(String directoryPath)
   {
@@ -42,7 +44,8 @@ public class FileUnitOFWork implements UnitOfWork
     try
     {
       Files.createDirectories(Paths.get(directoryPath));
-      String[] fileNames = {STOCKS_FILE, PORTFOLIOS_FILE, OWNED_STOCKS_FILE, TRANSACTIONS_FILE, STOCK_PRICE_HISTORY_FILE};
+      String[] fileNames = {stocks_file, portfolios_file, owned_stocks_file,
+          transactions_file, stock_price_history_file};
       for (String name : fileNames)
       {
         File file = new File(directoryPath + "/" + name);
@@ -69,28 +72,34 @@ public class FileUnitOFWork implements UnitOfWork
 
   @Override public void commit()
   {
-    synchronized (FILE_WRITE_LOCK)
+    synchronized (file_write_lock)
     {
       if (stocks != null)
-        saveToFile(STOCKS_FILE, stocks, this::stockToPSV);
+        saveToFile(stocks_file, stocks, this::stockToPSV);
+
       if (portfolios != null)
-        saveToFile(PORTFOLIOS_FILE, portfolios, this::portfolioToPSV);
+        saveToFile(portfolios_file, portfolios, this::portfolioToPSV);
+
       if (ownedStocks != null)
-        saveToFile(OWNED_STOCKS_FILE, ownedStocks, this::ownedStockToPSV);
-      if (transactions != null || !transactionBuffer.isEmpty())
+        saveToFile(owned_stocks_file, ownedStocks, this::ownedStockToPSV);
+
+      if (!transactionBuffer.isEmpty())
       {
-        List<Transaction> all = new ArrayList<>(getTransactions());
-        all.addAll(transactionBuffer);
-        saveToFile(TRANSACTIONS_FILE, all, this::transactionToPSV);
+        List<String> transactionLines = transactionBuffer.stream()
+            .map(this::transactionToPSV).toList();
+
+        appendLinesToFile(transactions_file, transactionLines);
       }
-      if (stockPriceHistories != null || !stockPriceHistoryBuffer.isEmpty())
+
+      if (!stockPriceHistoryBuffer.isEmpty())
       {
-        List<StockPriceHistory> all = new ArrayList<>(getStockPriceHistories());
-        all.addAll(stockPriceHistoryBuffer);
-        saveToFile(STOCK_PRICE_HISTORY_FILE, all, this::stockPriceHistoryToPSV);
+        List<String> historyLines = stockPriceHistoryBuffer.stream()
+            .map(this::stockPriceHistoryToPSV).toList();
+
+        appendLinesToFile(stock_price_history_file, historyLines);
       }
     }
-    clearData(); // Reset after committing
+    clearData(); // Reset all the in-memory lists after saving/committing
   }
 
   private void clearData()
@@ -126,7 +135,8 @@ public class FileUnitOFWork implements UnitOfWork
   // PortfolioPSV
   private String portfolioToPSV(Portfolio portfolio)
   {
-    return portfolio.getId() + "|" + portfolio.getCurrentBalance();
+    return portfolio.getId() + "|" + portfolio.getName() + "|"
+        + portfolio.getCurrentBalance();
   }
 
   private Portfolio portfolioFromPSV(String psv)
@@ -134,8 +144,8 @@ public class FileUnitOFWork implements UnitOfWork
     String[] parts = psv.split("\\|");
 
     UUID id = UUID.fromString(parts[0]);
-    double currentBalance = Double.parseDouble(parts[1]);
-    String name = parts[2];
+    String name = parts[1];
+    double currentBalance = Double.parseDouble(parts[2]);
 
     return new Portfolio(id, name, currentBalance);
   }
@@ -208,6 +218,7 @@ public class FileUnitOFWork implements UnitOfWork
     return new StockPriceHistory(id, stockSymbol, price, timestamp);
   }
 
+  // Read
   private List<String> readAllLines(String fileName)
   {
     try
@@ -220,8 +231,8 @@ public class FileUnitOFWork implements UnitOfWork
     }
   }
 
-  private <T> List<T> loadList(String fileName,
-      Function<String, T> parser)
+  // Load from file
+  private <T> List<T> loadList(String fileName, Function<String, T> parser)
   {
     List<T> list = new ArrayList<>();
     List<String> lines = readAllLines(fileName);
@@ -235,6 +246,7 @@ public class FileUnitOFWork implements UnitOfWork
     return list;
   }
 
+  // Save to file
   private <T> void saveToFile(String fileName, List<T> list,
       Function<T, String> mapper)
   {
@@ -253,38 +265,55 @@ public class FileUnitOFWork implements UnitOfWork
     }
   }
 
+  // Append to file
+  private void appendLinesToFile(String fileName, List<String> list)
+  {
+    try
+    {
+      Files.write(Path.of(directoryPath + "/" + fileName), list,
+          StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    }
+    catch (IOException e)
+    {
+      Logger.getInstance().log("ERROR",
+          "Append failed for " + fileName + ": " + e.getMessage());
+      throw new RuntimeException("Persistence Error: Append failed", e);
+    }
+  }
+
+  // getters
   @Override public List<Stock> getStocks()
   {
     if (this.stocks == null)
-      stocks = loadList(STOCKS_FILE, this::stockFromPSV);
+      stocks = loadList(stocks_file, this::stockFromPSV);
     return this.stocks;
   }
 
   @Override public List<Portfolio> getPortfolios()
   {
     if (this.portfolios == null)
-      portfolios = loadList(PORTFOLIOS_FILE, this::portfolioFromPSV);
+      portfolios = loadList(portfolios_file, this::portfolioFromPSV);
     return this.portfolios;
   }
 
   @Override public List<OwnedStock> getOwnedStocks()
   {
     if (this.ownedStocks == null)
-      ownedStocks = loadList(OWNED_STOCKS_FILE, this::ownedStockFromPSV);
+      ownedStocks = loadList(owned_stocks_file, this::ownedStockFromPSV);
     return this.ownedStocks;
   }
 
   @Override public List<Transaction> getTransactions()
   {
     if (this.transactions == null)
-      transactions = loadList(TRANSACTIONS_FILE, this::transactionFromPSV);
+      transactions = loadList(transactions_file, this::transactionFromPSV);
     return this.transactions;
   }
 
-  @Override public List<StockPriceHistory> getStockPriceHistories()
+  @Override public List<StockPriceHistory> getStockPriceHistory()
   {
     if (this.stockPriceHistories == null)
-      stockPriceHistories = loadList(STOCK_PRICE_HISTORY_FILE,
+      stockPriceHistories = loadList(stock_price_history_file,
           this::stockPriceHistoryFromPSV);
     return this.stockPriceHistories;
   }

@@ -8,7 +8,7 @@ public class StockPriceHistory
   private final UUID id;
   private final String stockSymbol;
   private final double price;
-  private Instant timeStamp;
+  private final Instant timeStamp;
 
   public StockPriceHistory(String stockSymbol, double price)
   {

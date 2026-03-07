@@ -13,7 +13,7 @@ public interface UnitOfWork
   List<Portfolio> getPortfolios();
   List<OwnedStock> getOwnedStocks();
   List<Transaction> getTransactions();
-  List<StockPriceHistory> getStockPriceHistories();
+  List<StockPriceHistory> getStockPriceHistory();
 
 
 }
