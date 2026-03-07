@@ -4,7 +4,6 @@ import domain.*;
 import persistence.interfaces.UnitOfWork;
 import shared.logging.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,9 +47,9 @@ public class FileUnitOFWork implements UnitOfWork
           transactions_file, stock_price_history_file};
       for (String name : fileNames)
       {
-        File file = new File(directoryPath + "/" + name);
-        if (!file.exists())
-          file.createNewFile();
+        Path filePath = Path.of(directoryPath, name);
+        if (!Files.exists(filePath))
+          Files.createFile(filePath);
       }
     }
     catch (IOException e)
