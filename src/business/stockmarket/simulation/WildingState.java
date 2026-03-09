@@ -8,10 +8,10 @@ public class WildingState implements StockState
 
   @Override public double calculatePriceChange(LiveStock liveStock)
   {
-    // Huge swings: -10.0 to +10.0
+    // Big swings .... (-10.0 to +10.0)
     double change = (random.nextDouble() * 20) - 10;
 
-    // High 20% chance to go to SteadyState
+    // High 20% chance of SteadyState
     if (random.nextDouble() < 0.20)
     {
       liveStock.setState(new SteadyState());
