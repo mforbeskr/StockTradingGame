@@ -13,7 +13,7 @@ public class AppConfig
   {
     this.startingBalance = 10000;
     this.transactionFee = 2.50;
-    this.updateFrequencyInMs = 2000;
+    this.updateFrequencyInMs = 1000;
     this.stockResetValue = 100.0;
     this.dataPath = "data";
   }

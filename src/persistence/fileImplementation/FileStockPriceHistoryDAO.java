@@ -8,9 +8,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class FileStockPriceHistoryDAO implements StockPriceHistoryDAO {
-  private final FileUnitOFWork uow;
+  private final FileUnitOfWork uow;
 
-  public FileStockPriceHistoryDAO(FileUnitOFWork uow) {
+  public FileStockPriceHistoryDAO(FileUnitOfWork uow) {
     this.uow = uow;
   }
 

@@ -8,19 +8,15 @@ public class DecliningState implements StockState
 
   @Override public double calculatePriceChange(LiveStock stock)
   {
-    return (Math.random() * 3.0) - 2.5;
+    return (random.nextDouble() * 3.0) - 2.5;
   }
 
   @Override public void updateState(LiveStock stock)
   {
-    double chance = Math.random();
-    if (chance < 0.10)
+    StockState next = TransitionManager.getInstance().getNextRandomState(this);
+    if (next != null)
     {
-      stock.setState(new SteadyState());
-    }
-    else if (chance < 0.15)
-    {
-      stock.setState(new GrowingState());
+      stock.setState(next);
     }
   }
 

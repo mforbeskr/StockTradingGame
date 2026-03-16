@@ -9,10 +9,10 @@ import java.util.Optional;
 
 public class FileStockDAO implements StockDAO
 {
-  private final FileUnitOFWork uow;
+  private final FileUnitOfWork uow;
 
 
-  public FileStockDAO(FileUnitOFWork uow)
+  public FileStockDAO(FileUnitOfWork uow)
   {
     this.uow = uow;
   }

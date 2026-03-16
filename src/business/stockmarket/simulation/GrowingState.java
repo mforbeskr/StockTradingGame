@@ -13,9 +13,10 @@ public class GrowingState implements StockState
 
   @Override public void updateState(LiveStock stock)
   {
-    if (random.nextDouble() < 0.1)
+    StockState next = TransitionManager.getInstance().getNextRandomState(this);
+    if (next != null)
     {
-      stock.setState(new SteadyState());
+      stock.setState(next);
     }
   }
 

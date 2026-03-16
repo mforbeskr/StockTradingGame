@@ -14,8 +14,7 @@ public class ResetState implements StockState
 
   @Override public void updateState(LiveStock stock)
   {
-    // Immediately move back to Steady once the price is reset
-    stock.setState(new SteadyState());
+    stock.setState(TransitionManager.getInstance().getNextRandomState(this));
   }
 
   @Override public String getStateName()

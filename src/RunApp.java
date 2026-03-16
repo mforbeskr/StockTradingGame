@@ -1,91 +1,50 @@
-import domain.*;
-import persistence.fileImplementation.*;
-import persistence.interfaces.*;
-import shared.configuration.AppConfig;
+import business.stockmarket.services.StockAlertService;
+import business.stockmarket.services.StockBankruptService;
+import business.stockmarket.services.StockListenerService;
+import business.stockmarket.simulation.MarketUpdateTask;
+import business.stockmarket.StockMarket;
+import persistence.fileImplementation.FileOwnedStockDAO;
+import persistence.fileImplementation.FileStockDAO;
+import persistence.fileImplementation.FileUnitOfWork;
+import persistence.interfaces.OwnedStockDAO;
+import persistence.interfaces.StockDAO;
 import shared.logging.ConsoleLogOutput;
 import shared.logging.Logger;
 
-import java.time.Instant;
-import java.util.UUID;
-
 public class RunApp {
   public static void main(String[] args) {
-    // 1. Setup Infrastructure
+    // 1. Setup Logger og DAOs (UnitOfWork ville normalt klare dette)
     Logger logger = Logger.getInstance();
     logger.setOutput(new ConsoleLogOutput());
-    AppConfig appConfig = AppConfig.getInstance();
-    String dataPath = appConfig.getDataPath();
 
-    logger.log("INFO", "--- Starting Comprehensive Persistence & Append Test ---");
+    // Du skal bruge dine DAOs til dine services
+    // Her antages det at du har en måde at få fat i dine DAO implementeringer
+    // F.eks. via din FileUnitOfWork:
+    FileUnitOfWork uow = new FileUnitOfWork("data");
+    StockDAO stockDAO = new FileStockDAO(uow);
+    OwnedStockDAO ownedStockDAO = new FileOwnedStockDAO(uow);
 
-    // 2. Initialize Persistence Layer
-    FileUnitOFWork uow = new FileUnitOFWork(dataPath);
+    // 2. Setup Marked
+    StockMarket market = StockMarket.getInstance();
+    market.initialize(stockDAO); // Indlæser eksisterende aktier fra filen
 
-    // Use Interfaces for the variables, Implementations for the objects
-    StockDAO stockDao = new FileStockDAO(uow);
-    PortfolioDAO portfolioDao = new FilePortfolioDAO(uow);
-    OwnedStockDAO ownedStockDao = new FileOwnedStockDAO(uow);
-    TransactionDAO transactionDao = new FileTransactionDAO(uow);
-    StockPriceHistoryDAO historyDao = new FileStockPriceHistoryDAO(uow);
+    // 3. INSTANSIER SERVICES (Vigtigt for Observer Pattern!)
+    // De tilmelder sig selv til markedet i deres constructorer
+    new StockListenerService(stockDAO, uow);
+    new StockAlertService();
+    new StockBankruptService(ownedStockDAO, uow);
+
+    // 4. Start simulationen
+    MarketUpdateTask task = new MarketUpdateTask();
+    Thread marketThread = new Thread(task);
+    marketThread.setDaemon(true);
+    marketThread.start();
 
     try {
-      uow.beginTransaction();
-      logger.log("INFO", "Transaction started. Processing batch...");
-
-      // --- PART A: STANDARD CREATION (Overwrite Logic) ---
-
-      // Create Stock only if it doesn't exist to avoid duplicate errors
-      String symbol = "AAPL";
-      if (stockDao.getBySymbol(symbol).isEmpty()) {
-        stockDao.create(new Stock(symbol, "Apple Inc.", 180.00, State.STEADY));
-        logger.log("INFO", "[CREATE] New Stock added: " + symbol);
-      } else {
-        logger.log("INFO", "[SKIP] Stock " + symbol + " already exists.");
-      }
-
-      // Create a unique Portfolio for this specific test run
-      UUID myPortId = UUID.randomUUID();
-      portfolioDao.create(new Portfolio(myPortId, "Test Wallet", 50000.00));
-      logger.log("INFO", "[CREATE] Portfolio created with ID: " + myPortId);
-
-      // --- PART B: OPTIMIZED APPENDING (Append-Only Logic) ---
-
-      // Simulate price fluctuations
-      logger.log("INFO", "Appending price history updates...");
-      historyDao.append(new StockPriceHistory(symbol, 180.50));
-      historyDao.append(new StockPriceHistory(symbol, 181.20));
-
-      // Simulate a trade
-      logger.log("INFO", "Appending new transaction...");
-      Transaction trade = new Transaction(
-          myPortId,
-          symbol,
-          Instant.now(),
-          appConfig.getTransactionFee(),
-          181.20,
-          10,
-          TransactionType.BUY
-      );
-      transactionDao.append(trade);
-
-      // --- PART C: THE COMMIT ---
-      uow.commit();
-      logger.log("INFO", "--- COMMIT SUCCESSFUL ---");
-
-      // --- PART D: VERIFICATION ---
-      logger.log("INFO", "Final Disk Audit:");
-      logger.log("INFO", "Total Stocks: " + stockDao.getAll().size());
-      logger.log("INFO", "Total Portfolios: " + portfolioDao.getAll().size());
-      logger.log("INFO", "Total History Records: " + historyDao.getAll().size());
-      logger.log("INFO", "Total Transactions: " + transactionDao.getAll().size());
-
-    } catch (Exception e) {
-      logger.log("ERROR", "CRITICAL FAILURE: " + e.getMessage());
-      e.printStackTrace(); // Useful for debugging the "red" lines
-      uow.rollback();
-      logger.log("WARNING", "Rollback executed. No data was written to files.");
+      Thread.sleep(40000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
-
-    logger.log("INFO", "--- Test Run Finished ---");
   }
 }
+

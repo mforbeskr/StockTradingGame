@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-public class FileUnitOFWork implements UnitOfWork
+public class FileUnitOfWork implements UnitOfWork
 {
   private final String directoryPath;
   private static final Object file_write_lock = new Object();
@@ -32,7 +32,7 @@ public class FileUnitOFWork implements UnitOfWork
   private static final String transactions_file = "transactions.psv";
   private static final String stock_price_history_file = "stockPriceHistory.psv";
 
-  public FileUnitOFWork(String directoryPath)
+  public FileUnitOfWork(String directoryPath)
   {
     this.directoryPath = directoryPath;
     ensureFilesExist();

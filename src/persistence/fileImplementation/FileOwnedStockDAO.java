@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 
 public class FileOwnedStockDAO implements OwnedStockDAO
 {
-  private final FileUnitOFWork uow;
+  private final FileUnitOfWork uow;
 
 
-  public FileOwnedStockDAO(FileUnitOFWork uow)
+  public FileOwnedStockDAO(FileUnitOfWork uow)
   {
     this.uow = uow;
   }

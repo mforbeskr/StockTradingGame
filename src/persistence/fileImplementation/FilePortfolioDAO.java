@@ -10,9 +10,9 @@ import java.util.UUID;
 
 public class FilePortfolioDAO implements PortfolioDAO
 {
-  private final FileUnitOFWork uow;
+  private final FileUnitOfWork uow;
 
-  public FilePortfolioDAO(FileUnitOFWork uow)
+  public FilePortfolioDAO(FileUnitOfWork uow)
   {
     this.uow = uow;
   }

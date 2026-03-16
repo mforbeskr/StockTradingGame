@@ -1,7 +1,6 @@
 package business.stockmarket.simulation;
 
 import shared.configuration.AppConfig;
-import shared.logging.Logger;
 
 public class LiveStock
 {
@@ -33,17 +32,21 @@ public class LiveStock
     {
       this.currentPrice = 0;
       this.setState(new BankruptState());
-      Logger.getInstance().log("WARNING", stockSymbol + " has gone bankrupt!");
     }
-    currentState.updateState(this);
+    else
+    {
+      currentState.updateState(this);
+    }
   }
 
   private StockState mapStateNameToObject(String stateName)
   {
-    return switch (stateName) {
+    return switch (stateName)
+    {
       case "Growing" -> new GrowingState();
       case "Declining" -> new DecliningState();
       case "Bankrupt" -> new BankruptState();
+      case "Wilding" -> new WildingState();
       default -> new SteadyState();
     };
   }

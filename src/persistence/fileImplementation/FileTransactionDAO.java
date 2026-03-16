@@ -9,9 +9,9 @@ import java.util.UUID;
 
 public class FileTransactionDAO implements TransactionDAO
 {
-  private final FileUnitOFWork uow;
+  private final FileUnitOfWork uow;
 
-  public FileTransactionDAO(FileUnitOFWork uow)
+  public FileTransactionDAO(FileUnitOfWork uow)
   {
     this.uow = uow;
   }

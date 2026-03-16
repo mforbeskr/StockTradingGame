@@ -1,22 +1,27 @@
 package business.stockmarket.simulation;
 
-import java.util.Random;
 
 public class BankruptState implements StockState
 {
-  private static final Random random = new Random();
+  private int cooldown = 5;
 
   @Override public double calculatePriceChange(LiveStock stock)
   {
-    return 0; // Bankrupt = price 0
+    return (-stock.getCurrentPrice());
   }
 
   @Override public void updateState(LiveStock stock)
   {
-    // After a random duration of "waiting", move to Reset
-    if (random.nextDouble() < 0.04)
+    // minimum 5 ticks being on 'cooldown' --> 15% chance to reset
+    if (cooldown > 0)
     {
-      stock.setState(new ResetState());
+      cooldown--;
+      return;
+    }
+    StockState next = TransitionManager.getInstance().getNextRandomState(this);
+    if (next != null)
+    {
+      stock.setState(next);
     }
   }
 
