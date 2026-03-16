@@ -9,6 +9,11 @@ public class TransitionManager
 
   private TransitionManager(){}
 
+  public static TransitionManager getInstance()
+  {
+    return instance;
+  }
+
   public StockState getNextRandomState(StockState currentState)
   {
     double rand = random.nextDouble();
@@ -57,11 +62,6 @@ public class TransitionManager
       return new SteadyState();
     }
     return null;
-  }
-
-  public static TransitionManager getInstance()
-  {
-    return instance;
   }
 
   public StockState getForcedNextState(StockState currentState)
