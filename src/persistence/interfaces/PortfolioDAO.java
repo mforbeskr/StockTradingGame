@@ -12,5 +12,5 @@ public interface PortfolioDAO
   void update(Portfolio portfolio);
   boolean delete(UUID id);
   List<Portfolio> getAll();
-  Optional<Portfolio> getById(UUID id); // symbols identify stocks
+  Optional<Portfolio> getById(UUID id);
 }

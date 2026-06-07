@@ -12,10 +12,7 @@ public class StockPriceHistory
 
   public StockPriceHistory(String stockSymbol, double price)
   {
-    this.id = UUID.randomUUID();
-    this.stockSymbol = stockSymbol;
-    this.price = price;
-    this.timeStamp = Instant.now();
+    this(UUID.randomUUID(), stockSymbol, price, Instant.now());
   }
 
   // for EXISTING StockPriceHistory -> fromPSV usage (because ID not initialized before)

@@ -76,6 +76,15 @@ public class FileOwnedStockDAO implements OwnedStockDAO
         .findFirst();
   }
 
+  @Override public Optional<OwnedStock> getByPortfolioIdAndStockSymbol(
+      UUID portfolioId, String stockSymbol)
+  {
+    return uow.getOwnedStocks().stream()
+        .filter(os -> os.getPortfolioId().equals(portfolioId))
+        .filter(os -> os.getStockSymbol().equalsIgnoreCase(stockSymbol))
+        .findFirst();
+  }
+
   @Override public List<OwnedStock> getAll()
   {
     return List.copyOf(uow.getOwnedStocks());

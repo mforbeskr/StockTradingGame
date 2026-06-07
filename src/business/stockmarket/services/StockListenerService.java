@@ -2,8 +2,9 @@ package business.stockmarket.services;
 
 import business.stockmarket.StockMarket;
 import business.stockmarket.events.StockUpdateEvent;
-import domain.Stock;
+import domain.StockPriceHistory;
 import persistence.interfaces.StockDAO;
+import persistence.interfaces.StockPriceHistoryDAO;
 import persistence.interfaces.UnitOfWork;
 
 import java.beans.PropertyChangeEvent;
@@ -13,12 +14,14 @@ import java.beans.PropertyChangeSupport;
 public class StockListenerService implements PropertyChangeListener
 {
   private final StockDAO stockDAO;
+  private final StockPriceHistoryDAO priceHistoryDAO;
   private final UnitOfWork uow;
   private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
-  public StockListenerService(StockDAO stockDAO, UnitOfWork uow)
+  public StockListenerService(StockDAO stockDAO, StockPriceHistoryDAO priceHistoryDAO, UnitOfWork uow)
   {
     this.stockDAO = stockDAO;
+    this.priceHistoryDAO = priceHistoryDAO;
     this.uow = uow;
     StockMarket.getInstance().addPropertyChangeListener(this);
   }
@@ -34,13 +37,24 @@ public class StockListenerService implements PropertyChangeListener
     {
       StockUpdateEvent updateEventData = (StockUpdateEvent) e.getNewValue();
 
-      Stock stockToPersist = new Stock(updateEventData.symbol(),
-          updateEventData.symbol(), updateEventData.price(), updateEventData.currentState());
+      // SYNCHRONIZED block ensures the background thread can commit safely
+      // without locking up against the UI thread timeline pulls!
+      synchronized (uow)
+      {
+        stockDAO.getBySymbol(updateEventData.symbol()).ifPresent(stock -> {
+          stock.setCurrentPrice(updateEventData.price());
+          stock.setCurrentState(updateEventData.currentState());
+          stockDAO.update(stock);
 
-      stockDAO.update(stockToPersist);
-      uow.commit();
+          priceHistoryDAO.create(new StockPriceHistory(stock.getSymbol(),
+              updateEventData.price()));
 
-      support.firePropertyChange("UI_UPDATE", null, updateEventData);
+          uow.commit();
+
+          // Let the event fire cleanly to notify any observing layers
+          support.firePropertyChange("Stock Updated", null, updateEventData);
+        });
+      }
     }
   }
 }

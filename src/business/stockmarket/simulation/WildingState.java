@@ -5,7 +5,7 @@ import java.util.Random;
 public class WildingState implements StockState
 {
   private static final Random random = new Random();
-  private int ticksRemaining = 7;
+  private int ticksRemaining = 15;
 
   @Override public double calculatePriceChange(LiveStock liveStock)
   {
@@ -15,13 +15,13 @@ public class WildingState implements StockState
   @Override public void updateState(LiveStock stock)
   {
     ticksRemaining--;
-    // After maximum 7 ticks, it will go 'Steady'
+    // After maximum 15 ticks, it will go 'Steady'
     if (ticksRemaining <= 0)
     {
       stock.setState(TransitionManager.getInstance().getForcedNextState(this));
       return;
     }
-    // TransitionManager checks if we exit WILDING State early (20%)
+    // TransitionManager checks if we exit WILDING State early (15%)
     StockState nextState = TransitionManager.getInstance()
         .getNextRandomState(this);
     if (nextState != null)

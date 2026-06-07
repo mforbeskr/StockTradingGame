@@ -47,7 +47,7 @@ public class TransitionManager
     }
     else if (currentState instanceof WildingState)
     {
-      if (rand < 0.20)
+      if (rand < 0.15)
       {
         return new SteadyState();
       }

@@ -9,6 +9,7 @@ public interface UnitOfWork
   void beginTransaction();
   void rollback();
   void commit();
+  void clearAllPhysicalData();
   List<Stock> getStocks();
   List<Portfolio> getPortfolios();
   List<OwnedStock> getOwnedStocks();

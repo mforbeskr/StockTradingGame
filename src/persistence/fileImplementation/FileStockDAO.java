@@ -54,7 +54,7 @@ public class FileStockDAO implements StockDAO
 
     if (!removed)
     {
-      // log warning - tried to delete a 'ghost' stock
+      // log warning - tried to clearAll a 'ghost' stock
       Logger.getInstance()
           .log("ERROR", "Delete FAILED: Stock '" + symbol + "' not found.");
     }

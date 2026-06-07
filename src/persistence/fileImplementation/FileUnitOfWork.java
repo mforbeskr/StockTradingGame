@@ -101,6 +101,35 @@ public class FileUnitOfWork implements UnitOfWork
     clearData(); // Reset all the in-memory lists after saving/committing
   }
 
+  @Override public void clearAllPhysicalData()
+  {
+    synchronized (file_write_lock)
+    {
+      clearData();
+
+      try
+      {
+        String[] fileNames = {stocks_file, portfolios_file, owned_stocks_file,
+            transactions_file, stock_price_history_file};
+
+        for (String name : fileNames)
+        {
+          Path filePath = Path.of(directoryPath, name);
+          if (Files.exists(filePath))
+          {
+            Files.write(filePath, new ArrayList<>(),
+                StandardOpenOption.TRUNCATE_EXISTING);
+          }
+        }
+      }
+      catch (IOException e)
+      {
+        throw new RuntimeException(
+            "Failed to wipe database files during new game reset", e);
+      }
+    }
+  }
+
   private void clearData()
   {
     this.stocks = null;

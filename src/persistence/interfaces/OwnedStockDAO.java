@@ -12,5 +12,7 @@ public interface OwnedStockDAO
   void update(OwnedStock ownedStock);
   boolean delete(UUID id);
   Optional<OwnedStock> getById(UUID id);
+  Optional<OwnedStock> getByPortfolioIdAndStockSymbol(UUID portfolioId,
+      String stockSymbol);
   List<OwnedStock> getAll();
 }

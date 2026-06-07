@@ -21,6 +21,13 @@ public class Logger
 
   public synchronized void log(String level, String message)
   {
-    output.log(level, message);
+    if (output == null)
+    {
+      System.out.println("[" + level + "] " + message);
+    }
+    else
+    {
+      output.log(level, message);
+    }
   }
 }

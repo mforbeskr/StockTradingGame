@@ -39,4 +39,10 @@ public class FileTransactionDAO implements TransactionDAO
     uow.getTransactionBuffer().add(transaction);
   }
 
+  @Override public void clearAll()
+  {
+    uow.getTransactions().clear();
+    uow.getTransactionBuffer().clear();
+  }
+
 }
