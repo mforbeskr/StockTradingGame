@@ -10,7 +10,6 @@ import presentation.core.ViewManager;
 import shared.configuration.ApplicationContext;
 import shared.logging.ConsoleLogOutput;
 import shared.logging.Logger;
-import java.util.UUID;
 
 public class RunApp extends Application {
   @Override

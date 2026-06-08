@@ -31,12 +31,12 @@ public class LiveStock
     if (this.currentPrice <= 0)
     {
       this.currentPrice = 0;
-      this.setState(new BankruptState());
+      if (!(currentState instanceof BankruptState))
+      {
+        this.setState(new BankruptState());
+      }
     }
-    else
-    {
-      currentState.updateState(this);
-    }
+    currentState.updateState(this);
   }
 
   private StockState mapStateNameToObject(String stateName)
@@ -47,6 +47,7 @@ public class LiveStock
       case "Declining" -> new DecliningState();
       case "Bankrupt" -> new BankruptState();
       case "Wilding" -> new WildingState();
+      case "Reset" -> new ResetState();
       default -> new SteadyState();
     };
   }

@@ -5,6 +5,7 @@ import domain.Portfolio;
 import domain.State;
 import domain.Stock;
 import persistence.interfaces.*;
+import shared.configuration.AppConfig;
 
 import java.util.List;
 import java.util.UUID;
@@ -74,7 +75,8 @@ public class GameService
 
       StockMarket.getInstance().initialize(stockDAO);
 
-      Portfolio startingPortfolio = new Portfolio("Main Portfolio", 100000.0);
+      Portfolio startingPortfolio = new Portfolio("Main Portfolio",
+          AppConfig.getInstance().getStartingBalance());
       portfolioDAO.create(startingPortfolio);
 
       uow.commit();
